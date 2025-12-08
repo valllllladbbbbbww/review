@@ -11,24 +11,27 @@
   <textarea id="pesan" placeholder="Tulis review..." rows="4"></textarea><br /><br />
   <button id="kirim">Kirim</button>
 
-  <!-- Firebase + Logic -->
   <script type="module">
+    // WAJIB: versi CDN Firebase terbaru
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+    // PASTIKAN CONFIG DIGANTI ASLI MILIKMU
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_BUCKET",
-      messagingSenderId: "YOUR_SENDER",
-      appId: "YOUR_APP_ID"
+      apiKey: "REPLACE_ME",
+      authDomain: "REPLACE_ME",
+      projectId: "REPLACE_ME",
+      storageBucket: "REPLACE_ME",
+      messagingSenderId: "REPLACE_ME",
+      appId: "REPLACE_ME"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    document.getElementById("kirim").addEventListener("click", async () => {
+    const btn = document.getElementById("kirim");
+
+    btn.addEventListener("click", async () => {
       const nama = document.getElementById("nama").value.trim();
       const pesan = document.getElementById("pesan").value.trim();
 
@@ -41,12 +44,13 @@
         await addDoc(collection(db, "reviews"), {
           nama: nama,
           pesan: pesan,
-          waktu: new Date()
+          waktu: new Date().toISOString()
         });
         alert("Review berhasil dikirim!");
         document.getElementById("nama").value = "";
         document.getElementById("pesan").value = "";
       } catch (e) {
+        console.error(e);
         alert("Gagal mengirim: " + e.message);
       }
     });
