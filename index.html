@@ -1,7 +1,4 @@
 <!DOCTYPE html>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Kirim Review</title>
 <style>
 body { font-family: Arial, sans-serif; background: #f2f2f2; padding: 20px; }
 .box { max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; }
@@ -10,9 +7,9 @@ button { padding: 10px 20px; background: #28a745; color: white; border: none; bo
 </style>
 
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+<!-- Firebase (Compat untuk mempermudah) -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 </head>
 <body>
 <div class="box">
@@ -24,17 +21,18 @@ button { padding: 10px 20px; background: #28a745; color: white; border: none; bo
 
 
 <script>
+// GANTI INI DENGAN CONFIG ASLI DARI FIREBASE KAMU
 const firebaseConfig = {
-apiKey: "....",
-authDomain: "....firebaseapp.com",
-projectId: "....",
-storageBucket: "....appspot.com",
-messagingSenderId: "....",
-appId: "...."
+apiKey: "PASTE_APIKEY_DI_SINI",
+authDomain: "PASTE_AUTHDOMAIN",
+projectId: "PASTE_PROJECTID",
+storageBucket: "PASTE_BUCKET",
+messagingSenderId: "PASTE_SENDERID",
+appId: "PASTE_APPID"
 };
 
 
-const app = firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 
@@ -46,17 +44,18 @@ const pesan = document.getElementById('pesan').value;
 if (!nama || !pesan) return alert('Isi semua data!');
 
 
-db.collection("reviews").add({ nama, pesan, waktu: new Date() })
+db.collection("reviews").add({
+nama: nama,
+pesan: pesan,
+waktu: new Date()
+})
 .then(() => {
 alert('Review berhasil dikirim!');
 document.getElementById('nama').value = '';
 document.getElementById('pesan').value = '';
 })
-.catch(err => alert('Error: ' + err));
+.catch(err => alert('ERROR: ' + err));
 }
 </script>
 </body>
 </html>
-
-
-
