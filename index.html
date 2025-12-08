@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kirim Review Pelanggan Ambrowniezz</title>
+<style>
+body { font-family: Arial, sans-serif; background: #f2f2f2; padding: 20px; }
+.box { max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; }
+input, textarea { width: 100%; padding: 10px; margin-top: 10px; border-radius: 6px; border: 1px solid #ccc; }
+button { padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="box">
+<h2>Kirim Review</h2>
+<input type="text" id="nama" placeholder="Nama Anda">
+<textarea id="pesan" rows="4" placeholder="Tulis review..."></textarea>
+<button onclick="kirimReview()">Kirim</button>
+</div>
+
+
+<script>
+function kirimReview() {
+const nama = document.getElementById('nama').value;
+const pesan = document.getElementById('pesan').value;
+
+
+if (!nama || !pesan) return alert('Isi semua data!');
+
+
+// Simpan ke localStorage sebagai INBOX saja, pelanggan tidak bisa lihat
+const inbox = JSON.parse(localStorage.getItem('inbox')) || [];
+inbox.push({ nama, pesan });
+localStorage.setItem('inbox', JSON.stringify(inbox));
+
+
+alert('Review berhasil dikirim!');
+document.getElementById('nama').value = '';
+document.getElementById('pesan').value = '';
+}
+</script>
+</body>
+</html>
