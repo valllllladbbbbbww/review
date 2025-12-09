@@ -1,52 +1,60 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Admin Panel Review</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Review Ambrowniezz</title>
 <style>
-body { font-family: Arial, sans-serif; background: #e9e9e9; padding: 20px; }
-.wrapper { max-width: 800px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; }
-.review { border: 1px solid #ccc; padding: 10px; border-radius: 8px; margin-bottom: 10px; background: #fafafa; }
-button { padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; margin-top: 5px; }
-.hapus-btn { background: #dc3545; color: white; }
+body { font-family: Arial; background:#f2f2f2; padding:20px; }
+.box { max-width:700px; margin:auto; }
+.review {
+  background:white; padding:15px; border-radius:10px;
+  box-shadow:0 0 10px #ddd; margin-bottom:15px;
+}
+.rating { color: gold; font-size:20px; }
+button.delete {
+  background:#dc3545; color:white; border:none; padding:5px 10px;
+  border-radius:6px; cursor:pointer; float:right;
+}
 </style>
 </head>
 <body>
-<div class="wrapper">
-<h2>Review Masuk</h2>
-<div id="review-admin"></div>
-</div>
 
+<h2 style="text-align:center;">Dashboard Review Ambrowniezz</h2>
+<div class="box" id="reviewList">Loading...</div>
 
 <script>
-function loadInbox() {
-const data = JSON.parse(localStorage.getItem('inbox')) || [];
-const container = document.getElementById('review-admin');
-container.innerHTML = '';
+const API = "https://693805f24618a71d77ce98b3.mockapi.io/Reviews";
 
+async function loadReview() {
+  const res = await fetch(API);
+  const data = await res.json();
 
-data.forEach((rev, i) => {
-container.innerHTML += `
-<div class="review">
-<strong>${rev.nama}</strong><br>
-<p>${rev.pesan}</p>
-<button class='hapus-btn' onclick='hapus(${i})'>Hapus</button>
-</div>
-`;
-});
+  let html = "";
+  data.reverse().forEach(r => {
+    html += `
+      <div class="review">
+        <button class="delete" onclick="hapus('${r.id}')">Hapus</button>
+        <h3>${r.nama}</h3>
+        <div class="rating">${"★".repeat(r.rating)}${"☆".repeat(5 - r.rating)}</div>
+        <p>${r.komentar}</p>
+        <small>${new Date(r.waktu).toLocaleString()}</small>
+      </div>
+    `;
+  });
+
+  document.getElementById("reviewList").innerHTML = html;
 }
 
+async function hapus(id) {
+  if (!confirm("Yakin ingin menghapus review ini?")) return;
 
-function hapus(i) {
-const data = JSON.parse(localStorage.getItem('inbox')) || [];
-data.splice(i, 1);
-localStorage.setItem('inbox', JSON.stringify(data));
-loadInbox();
+  await fetch(`${API}/${id}`, { method: "DELETE" });
+  loadReview();
 }
 
-
-loadInbox();
+loadReview();
 </script>
+
 </body>
 </html>
