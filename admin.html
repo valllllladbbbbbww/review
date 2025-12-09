@@ -3,66 +3,50 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Admin Review Panel</title>
+<title>Admin Panel Review</title>
 <style>
 body { font-family: Arial, sans-serif; background: #e9e9e9; padding: 20px; }
 .wrapper { max-width: 800px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; }
 .review { border: 1px solid #ccc; padding: 10px; border-radius: 8px; margin-bottom: 10px; background: #fafafa; }
-.hapus-btn { padding: 6px 12px; border: none; border-radius: 6px; background: #dc3545; color: white; cursor: pointer; }
+button { padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; margin-top: 5px; }
+.hapus-btn { background: #dc3545; color: white; }
 </style>
-
-
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
 </head>
 <body>
 <div class="wrapper">
-<h2>Daftar Review Masuk</h2>
+<h2>Review Masuk</h2>
 <div id="review-admin"></div>
 </div>
 
 
 <script>
-const firebaseConfig2 = {
-apiKey: "....",
-authDomain: "....firebaseapp.com",
-projectId: "....",
-storageBucket: "....appspot.com",
-messagingSenderId: "....",
-appId: "...."
-};
-
-
-const app2 = firebase.initializeApp(firebaseConfig2, "admin");
-const db2 = firebase.firestore(app2);
-
-
-function loadReview() {
-db2.collection("reviews").orderBy("waktu", "desc").onSnapshot(snapshot => {
+function loadInbox() {
+const data = JSON.parse(localStorage.getItem('inbox')) || [];
 const container = document.getElementById('review-admin');
 container.innerHTML = '';
 
 
-snapshot.forEach(doc => {
-const data = doc.data();
+data.forEach((rev, i) => {
 container.innerHTML += `
 <div class="review">
-<strong>${data.nama}</strong><br>
-<p>${data.pesan}</p>
-<button class='hapus-btn' onclick="hapus('${doc.id}')">Hapus</button>
-</div>`;
-});
+<strong>${rev.nama}</strong><br>
+<p>${rev.pesan}</p>
+<button class='hapus-btn' onclick='hapus(${i})'>Hapus</button>
+</div>
+`;
 });
 }
 
 
-function hapus(id) {
-db2.collection("reviews").doc(id).delete();
+function hapus(i) {
+const data = JSON.parse(localStorage.getItem('inbox')) || [];
+data.splice(i, 1);
+localStorage.setItem('inbox', JSON.stringify(data));
+loadInbox();
 }
 
 
-loadReview();
+loadInbox();
 </script>
 </body>
 </html>
