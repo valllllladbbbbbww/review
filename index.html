@@ -1,44 +1,84 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Kirim Review Pelanggan Ambrowniezz</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kirim Review Pelanggan</title>
 <style>
-body { font-family: Arial, sans-serif; background: #f2f2f2; padding: 20px; }
-.box { max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; }
-input, textarea { width: 100%; padding: 10px; margin-top: 10px; border-radius: 6px; border: 1px solid #ccc; }
-button { padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; margin-top: 10px; }
+body { font-family: Arial; background:#f6f6f6; padding:20px; }
+.box { max-width:500px; margin:auto; background:white; padding:20px; border-radius:12px; box-shadow:0 0 10px #ddd; }
+input, textarea { width:100%; padding:10px; margin-top:10px; border-radius:8px; border:1px solid #ccc; }
+button { background:#28a745; color:white; margin-top:15px; padding:10px; border:none; border-radius:8px; cursor:pointer; width:100%; }
+
+.stars span {
+  font-size: 28px;
+  cursor: pointer;
+  color: #ccc;
+}
+.stars span.active {
+  color: gold;
+}
 </style>
 </head>
 <body>
+
 <div class="box">
-<h2>Kirim Review Ambrowniezz</h2>
-<input type="text" id="nama" placeholder="Nama Anda">
-<textarea id="pesan" rows="4" placeholder="Tulis review..."></textarea>
+<h2>Kirim Review</h2>
+
+<input id="nama" type="text" placeholder="Nama Anda">
+
+<div class="stars" id="starBox">
+  <span data-rate="1">★</span>
+  <span data-rate="2">★</span>
+  <span data-rate="3">★</span>
+  <span data-rate="4">★</span>
+  <span data-rate="5">★</span>
+</div>
+
+<textarea id="komentar" rows="4" placeholder="Tulis komentar..."></textarea>
+
 <button onclick="kirimReview()">Kirim</button>
 </div>
 
-
 <script>
-function kirimReview() {
-const nama = document.getElementById('nama').value;
-const pesan = document.getElementById('pesan').value;
+let rating = 0;
 
+document.querySelectorAll("#starBox span").forEach(star => {
+  star.addEventListener("click", function() {
+    rating = this.dataset.rate;
+    document.querySelectorAll("#starBox span").forEach(s => s.classList.remove("active"));
+    for (let i = 0; i < rating; i++) {
+      document.querySelectorAll("#starBox span")[i].classList.add("active");
+    }
+  });
+});
 
-if (!nama || !pesan) return alert('Isi semua data!');
+async function kirimReview() {
+  const nama = document.getElementById("nama").value;
+  const komentar = document.getElementById("komentar").value;
 
+  if (!nama || !komentar || rating == 0) {
+    return alert("Isi nama, rating, dan komentar!");
+  }
 
-// Simpan ke localStorage sebagai INBOX saja, pelanggan tidak bisa lihat
-const inbox = JSON.parse(localStorage.getItem('inbox')) || [];
-inbox.push({ nama, pesan });
-localStorage.setItem('inbox', JSON.stringify(inbox));
+  await fetch("https://693805f24618a71d77ce98b3.mockapi.io/Reviews", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      nama: nama,
+      rating: rating,
+      komentar: komentar,
+      waktu: new Date().toISOString()
+    })
+  });
 
-
-alert('Review berhasil dikirim!');
-document.getElementById('nama').value = '';
-document.getElementById('pesan').value = '';
+  alert("Review Berhasil Dikirim!");
+  document.getElementById("nama").value = "";
+  document.getElementById("komentar").value = "";
+  rating = 0;
+  document.querySelectorAll("#starBox span").forEach(s => s.classList.remove("active"));
 }
 </script>
+
 </body>
 </html>
