@@ -1,59 +1,56 @@
 <!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Review Pelanggan</title>
-</head>
-<body>
-  <h2>Kirim Review</h2>
-  <input type="text" id="nama" placeholder="Nama" /><br /><br />
-  <textarea id="pesan" placeholder="Tulis review..." rows="4"></textarea><br /><br />
-  <button id="kirim">Kirim</button>
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  <script type="module">
-    // WAJIB: versi CDN Firebase terbaru
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // PASTIKAN CONFIG DIGANTI ASLI MILIKMU
-    const firebaseConfig = {
-      apiKey: "REPLACE_ME",
-      authDomain: "REPLACE_ME",
-      projectId: "REPLACE_ME",
-      storageBucket: "REPLACE_ME",
-      messagingSenderId: "REPLACE_ME",
-      appId: "REPLACE_ME"
-    };
+const firebaseConfig = {
+apiKey: "REPLACE_ME",
+authDomain: "REPLACE_ME",
+projectId: "REPLACE_ME",
+storageBucket: "REPLACE_ME",
+messagingSenderId: "REPLACE_ME",
+appId: "REPLACE_ME"
+};
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
 
-    const btn = document.getElementById("kirim");
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-    btn.addEventListener("click", async () => {
-      const nama = document.getElementById("nama").value.trim();
-      const pesan = document.getElementById("pesan").value.trim();
 
-      if (!nama || !pesan) {
-        alert("Nama dan pesan wajib diisi!");
-        return;
-      }
+let rating = 0;
 
-      try {
-        await addDoc(collection(db, "reviews"), {
-          nama: nama,
-          pesan: pesan,
-          waktu: new Date().toISOString()
-        });
-        alert("Review berhasil dikirim!");
-        document.getElementById("nama").value = "";
-        document.getElementById("pesan").value = "";
-      } catch (e) {
-        console.error(e);
-        alert("Gagal mengirim: " + e.message);
-      }
-    });
-  </script>
+
+const stars = document.querySelectorAll('#ratingBox span');
+stars.forEach(star => {
+star.addEventListener('click', () => {
+rating = star.dataset.val;
+stars.forEach(s => s.classList.remove('active'));
+for (let i = 0; i < rating; i++) stars[i].classList.add('active');
+});
+});
+
+
+document.getElementById("kirim").addEventListener("click", async () => {
+const nama = document.getElementById("nama").value.trim();
+const komentar = document.getElementById("komentar").value.trim();
+
+
+if (!nama || !komentar || rating === 0) {
+alert("Isi semua data termasuk rating!");
+return;
+}
+
+
+await addDoc(collection(db, "reviews"), {
+nama: nama,
+rating: rating,
+komentar: komentar,
+waktu: new Date().toISOString()
+});
+
+
+alert("Review terkirim!");
+location.reload();
+});
+</script>
 </body>
 </html>
