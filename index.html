@@ -1,98 +1,44 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kirim Review</title>
-
-  <style>
-    body { font-family: Arial; padding: 20px; }
-    .stars span {
-      font-size: 35px;
-      cursor: pointer;
-      color: #ccc;
-    }
-    .stars .active {
-      color: gold;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kirim Review Pelanggan Ambrowniezz</title>
+<style>
+body { font-family: Arial, sans-serif; background: #f2f2f2; padding: 20px; }
+.box { max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; }
+input, textarea { width: 100%; padding: 10px; margin-top: 10px; border-radius: 6px; border: 1px solid #ccc; }
+button { padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; margin-top: 10px; }
+</style>
 </head>
-
 <body>
-  <h2>Kirim Review</h2>
+<div class="box">
+<h2>Kirim Review Ambrowniezz</h2>
+<input type="text" id="nama" placeholder="Nama Anda">
+<textarea id="pesan" rows="4" placeholder="Tulis review..."></textarea>
+<button onclick="kirimReview()">Kirim</button>
+</div>
 
-  <label>Nama</label><br>
-  <input type="text" id="nama" style="width:100%;padding:8px;"><br><br>
 
-  <label>Rating</label><br>
-  <div class="stars" id="ratingBox">
-    <span data-val="1">★</span>
-    <span data-val="2">★</span>
-    <span data-val="3">★</span>
-    <span data-val="4">★</span>
-    <span data-val="5">★</span>
-  </div>
-  <br>
+<script>
+function kirimReview() {
+const nama = document.getElementById('nama').value;
+const pesan = document.getElementById('pesan').value;
 
-  <label>Komentar</label><br>
-  <textarea id="komentar" rows="4" style="width:100%;padding:8px;"></textarea><br><br>
 
-  <button id="kirim">Kirim</button>
+if (!nama || !pesan) return alert('Isi semua data!');
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc }
-      from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "ISI_PUNYAMU",
-      authDomain: "ISI_PUNYAMU",
-      projectId: "ISI_PUNYAMU",
-      storageBucket: "ISI_PUNYAMU",
-      messagingSenderId: "ISI_PUNYAMU",
-      appId: "ISI_PUNYAMU"
-    };
+// Simpan ke localStorage sebagai INBOX saja, pelanggan tidak bisa lihat
+const inbox = JSON.parse(localStorage.getItem('inbox')) || [];
+inbox.push({ nama, pesan });
+localStorage.setItem('inbox', JSON.stringify(inbox));
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
 
-    let rating = 0;
-    const stars = document.querySelectorAll("#ratingBox span");
-
-    // Klik bintang
-    stars.forEach(star => {
-      star.addEventListener("click", () => {
-        rating = Number(star.dataset.val);
-        stars.forEach(s => s.classList.remove("active"));
-        for (let i = 0; i < rating; i++) stars[i].classList.add("active");
-      });
-    });
-
-    // Kirim review
-    document.getElementById("kirim").addEventListener("click", async () => {
-      const nama = document.getElementById("nama").value.trim();
-      const komentar = document.getElementById("komentar").value.trim();
-
-      if (!nama || !komentar || rating === 0) {
-        alert("Isi semua kolom termasuk rating!");
-        return;
-      }
-
-      try {
-        await addDoc(collection(db, "reviews"), {
-          nama: nama,
-          rating: rating,
-          komentar: komentar,
-          waktu: new Date().toISOString()
-        });
-        alert("Review terkirim!");
-        location.reload();
-      } catch (err) {
-        alert("Error: " + err.message);
-        console.log(err);
-      }
-    });
-
-  </script>
+alert('Review berhasil dikirim!');
+document.getElementById('nama').value = '';
+document.getElementById('pesan').value = '';
+}
+</script>
 </body>
 </html>
