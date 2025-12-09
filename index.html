@@ -1,4 +1,35 @@
 <!DOCTYPE html>
+.stars span { font-size: 32px; cursor: pointer; color: #ccc; }
+.stars .active { color: gold; }
+</style>
+</head>
+<body>
+<h2>Kirim Review ⭐</h2>
+
+
+<label>Nama</label><br>
+<input type="text" id="nama" placeholder="Nama kamu" /><br><br>
+
+
+<label>Rating</label>
+<div class="stars" id="ratingBox">
+<span data-val="1">★</span>
+<span data-val="2">★</span>
+<span data-val="3">★</span>
+<span data-val="4">★</span>
+<span data-val="5">★</span>
+</div><br>
+
+
+<label>Komentar</label><br>
+<textarea id="komentar" placeholder="Tulis komentar..." rows="4"></textarea><br><br>
+
+
+<button id="kirim">Kirim Review</button>
+
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
