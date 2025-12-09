@@ -1,6 +1,15 @@
+<!-- =================== REVIEW PELANGGAN (100% WORKING) =================== -->
 <!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kirim Review</title>
+<style>
+body { font-family: Arial; padding: 20px; }
 .stars span { font-size: 32px; cursor: pointer; color: #ccc; }
 .stars .active { color: gold; }
+button { padding: 8px 15px; }
 </style>
 </head>
 <body>
@@ -8,10 +17,10 @@
 
 
 <label>Nama</label><br>
-<input type="text" id="nama" placeholder="Nama kamu" /><br><br>
+<input type="text" id="nama"><br><br>
 
 
-<label>Rating</label>
+<label>Rating</label><br>
 <div class="stars" id="ratingBox">
 <span data-val="1">★</span>
 <span data-val="2">★</span>
@@ -22,17 +31,19 @@
 
 
 <label>Komentar</label><br>
-<textarea id="komentar" placeholder="Tulis komentar..." rows="4"></textarea><br><br>
+<textarea id="komentar" rows="4"></textarea><br><br>
 
 
 <button id="kirim">Kirim Review</button>
 
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+// ====== FIREBASE IMPORT ======
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 
+// ====== MASUKKAN CONFIG ASLI KAMU DI SINI ======
 const firebaseConfig = {
 apiKey: "REPLACE_ME",
 authDomain: "REPLACE_ME",
@@ -47,41 +58,32 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 
+// ====== SISTEM RATING ======
 let rating = 0;
-
-
 const stars = document.querySelectorAll('#ratingBox span');
 stars.forEach(star => {
-star.addEventListener('click', () => {
+star.onclick = () => {
 rating = star.dataset.val;
 stars.forEach(s => s.classList.remove('active'));
 for (let i = 0; i < rating; i++) stars[i].classList.add('active');
-});
+};
 });
 
 
-document.getElementById("kirim").addEventListener("click", async () => {
+// ====== KIRIM REVIEW ======
+document.getElementById("kirim").onclick = async () => {
 const nama = document.getElementById("nama").value.trim();
 const komentar = document.getElementById("komentar").value.trim();
 
 
-if (!nama || !komentar || rating === 0) {
+if (!nama || !komentar || rating == 0) {
 alert("Isi semua data termasuk rating!");
 return;
 }
 
 
+try {
 await addDoc(collection(db, "reviews"), {
-nama: nama,
-rating: rating,
-komentar: komentar,
-waktu: new Date().toISOString()
-});
-
-
-alert("Review terkirim!");
-location.reload();
-});
-</script>
-</body>
-</html>
+nama,
+rating: Number(rating),
+komentar,
